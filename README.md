@@ -18,7 +18,7 @@
 ```
 Run the script with:
 ```sh
-  gcc main.c -o tits
+  g++ main.cpp -o tits
   ./tits <command>
 ```
 ## About the project:
