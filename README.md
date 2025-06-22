@@ -1,5 +1,5 @@
 ## Project name:
-### TITS (The Information Tracking System)
+### T.I.T.S (Tiny Information Tracking System)
 
 ## Team name: 
 ### Team 
