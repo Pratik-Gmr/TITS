@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include "initializer.cpp"
 
 using namespace std;
 
@@ -16,6 +17,16 @@ class Command{
             if(token_size == 2){
                 if(tokens[1] == "init"){                    
                     //initialization
+                    Initializer init;
+                    if(init.getStatus()){
+                        cout<<"This is already a TITS Directory.\n";
+                        cout<<"Re-initializing this directory will result in all your previous progress being lost\n";
+                        cout<<"If you still wish to re-initialize this directory as a TITS directory delete the .tits folder and try the 'tits init' command again\n";
+                        return;
+                    }
+                    init.init();
+                    if(init.getStatus()) cout<<"The directory has been initialized to a TITS directory\n";
+                    else cout<<"Some unexpected Error has occurred\n";
                     return;
                 }
                 else if(tokens[1] == "log"){
