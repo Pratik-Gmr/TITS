@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <filesystem>
 
 using namespace std;
@@ -18,7 +19,21 @@ public:
     void init(){
         //creates boilerplate .tits folder
         fs::create_directory(".tits");
-        //data member value remains false if error occurred
+        fs::create_directory(".tits/objects");
+        fs::path file_path=".tits/index.tits";
+        std::ofstream file(file_path);
+        if(!file){
+            throw std::runtime_error("Failed to create file");
+        }
+        file.close();
+        file_path=".tits/ignore.tits";
+        file.open(file_path);
+        if(!file){
+            throw std::runtime_error("Failed to create file");
+        }
+        file<<".tits/"<<endl;//always ignore .tits directory
+        file.close();
+    	//data member value remains false if error occurred
         //will be made true if initialization succeeds
         initialized = true;
     }

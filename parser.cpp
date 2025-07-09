@@ -59,6 +59,10 @@ class Command{
                     //remove files from staging area
                     return;
                 }
+        		else if(tokens[1] == "ignore"){
+	        		//adds file to ignore by tits
+		        	return;
+		        }
             }
             cout << "Given command doesnt exist please consult TITS documentation on its github repository" << endl;
         }
