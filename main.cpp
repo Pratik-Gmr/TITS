@@ -10,5 +10,6 @@ int main(int argc, char** argv){
     Command command(args, argc);
     command.parse();
     //Do the programme thingies!!
+    
     return 0;
 }
