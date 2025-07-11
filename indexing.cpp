@@ -48,7 +48,10 @@ class Indexer{
         string line;
         while(getline(file, line)){
             fs::path staged_files_path(line);
-            if(!is_regular_file(staged_files_path)) throw runtime_error("Files being staged are not regular files\n");
+            if(!is_regular_file(staged_files_path)){
+                cout << "Removing "<<staged_files_path<< " from stage, Not a regular file\n";
+                continue;
+            }
             staged_files_path = normalize_path(staged_files_path);
             if(is_ignored(staged_files_path)) continue; //dont write that file to stage
             stage.push_back(staged_files_path.string());
