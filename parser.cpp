@@ -1,69 +1,62 @@
 #include <iostream>
 #include <vector>
-#include "initializer.cpp"
 
 using namespace std;
 
-class Command{
+enum class Command{
+    init,
+    log,
+    history,
+    ignore,
+    add,
+    remove,
+    commit,
+    check,
+    revert,
+    invalid
+};
+
+class Parser{
     private:
         vector<string> tokens;
         int token_size;
     public:
-        Command() = default;
-        Command(vector<string> &cmd,int n):tokens(cmd),token_size(n){};
-        ~Command() = default;
-        void parse(){
+        Parser() = default;
+        Parser(vector<string> &cmd,int n):tokens(cmd),token_size(n){};
+        ~Parser() = default;
+        Command parse(){
             //does parsing
             if(token_size == 2){
                 if(tokens[1] == "init"){                    
-                    //initialization
-                    Initializer init;
-                    if(init.getStatus()){
-                        cout<<"This is already a TITS Directory.\n";
-                        cout<<"Re-initializing this directory will result in all your previous progress being lost\n";
-                        cout<<"If you still wish to re-initialize this directory as a TITS directory delete the .tits folder and try the 'tits init' command again\n";
-                        return;
-                    }
-                    init.init();
-                    if(init.getStatus()) cout<<"The directory has been initialized to a TITS directory\n";
-                    else cout<<"Some unexpected Error has occurred\n";
-                    return;
+                    return Command::init;
                 }
                 else if(tokens[1] == "log"){
-                    //display staging area
-                    return;
+                    return Command::log;
                 }
                 else if(tokens[1] == "history"){
-                    //display commit history
-                    return;
+                    return Command::history;
                 }
             }
             else if(token_size == 3){
-                if(tokens[1] == "commit"){
-                    //commit the staging area files
-                    return;
-                }
+        		if(tokens[1] == "ignore"){
+		        	return Command::ignore;
+		        }
                 else if(tokens[1] == "add"){
-                    //add files to staging area
-                    return;
-                }
-                else if(tokens[1] == "check"){
-                    //check that commit
-                    return;
-                }
-                else if(tokens[1] == "revert"){
-                    //revert to that commit point
-                    return;
+                    return Command::add;
                 }
                 else if(tokens[1] == "remove"){
-                    //remove files from staging area
-                    return;
+                    return Command::remove;
                 }
-        		else if(tokens[1] == "ignore"){
-	        		//adds file to ignore by tits
-		        	return;
-		        }
+                else if(tokens[1] == "commit"){
+                    return Command::commit;
+                }
+                else if(tokens[1] == "check"){
+                    return Command::check;
+                }
+                else if(tokens[1] == "revert"){
+                    return Command::revert;
+                }
             }
-            cout << "Given command doesnt exist please consult TITS documentation on its github repository" << endl;
+            return Command::invalid;
         }
 };
