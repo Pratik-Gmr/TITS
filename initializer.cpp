@@ -20,6 +20,9 @@ public:
         //creates boilerplate .tits folder
         fs::create_directory(".tits");
         fs::create_directory(".tits/objects");
+        fs::create_directory(".tits/objects/commits");
+        fs::create_directory(".tits/objects/trees");
+        fs::create_directory(".tits/objects/blobs");
         fs::path file_path=".tits/index.tits";
         std::ofstream file(file_path);
         if(!file){
@@ -33,7 +36,14 @@ public:
         }
         file<<".tits/"<<endl;//always ignore .tits directory
         file.close();
-    	//data member value remains false if error occurred
+        file_path=".tits/head";
+        file.open(file_path);
+        if(!file){
+            throw std::runtime_error("Failed to create file");
+        }
+        file.close();
+
+        //data member value remains false if error occurred
         //will be made true if initialization succeeds
         initialized = true;
     }

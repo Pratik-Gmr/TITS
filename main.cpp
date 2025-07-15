@@ -4,6 +4,7 @@
 #include "initializer.cpp"
 #include "parser.cpp"
 #include "indexing.cpp"
+#include "objects.cpp"
 
 using namespace std;
 
@@ -82,6 +83,7 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
+            Commit commit;
             break;
         }
         case Command::check:{

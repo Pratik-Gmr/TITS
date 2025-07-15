@@ -61,8 +61,8 @@ class Indexer{
         if(!file){
             throw runtime_error("Unexpected Error has occurred while reading the staging area of this TITS directory\n");
         }
-        for(const auto& iterated_path : stage){ //to write normalized version to the file as well,
-            file<<iterated_path.string()<<endl; //if some user manually wrote paths to the file
+        for(const auto& iterated_path : stage){ //to write normalized version to the file in case,
+            file<<iterated_path.string()<<endl; //some user manually wrote paths to the file
         }
         file.close();
     }
@@ -119,8 +119,11 @@ public:
         if(!file){
             throw runtime_error("Unexpected Error has occurred while writing to the staging area of this TITS directory\n");
         }
+
         if(fs::is_directory(file_path)){ //maybe write an iterator over this later?
+            bool empty_directory = true;
             for(const auto& iterated_file : fs::recursive_directory_iterator(file_path)){
+                empty_directory = false;
                 if(fs::is_regular_file(iterated_file)){
                     fs::path normalized_iterated_file = normalize_path(iterated_file.path());
                     if(!is_staged(normalized_iterated_file ) && !is_ignored(normalized_iterated_file )){
@@ -129,7 +132,12 @@ public:
                     }
                 }
             }
+            if(empty_directory){
+                cout << "No file to add. Consult TITS documentation for more information\n";
+                return;
+            }
         }
+
         else{
             if(is_ignored(file_path)){
                 throw runtime_error("ERROR: Said file is in ignore list, can't stage the file\n");
@@ -192,6 +200,10 @@ public:
         ignore.push_back(file_path.string()); //again same reasoning to keep this.
         file << file_path.string() << endl;
         cout << "Said file/directory has been successfully added to ignore list\n";
+    }
+
+    vector<fs::path> get_stage(){
+        return stage;
     }
 
 };

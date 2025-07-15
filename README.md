@@ -28,3 +28,6 @@ Our VCS aims to offer fundamental features such as **commit, checkout, revert**.
  
 Our goal is to leverage the power and efficiency of C++ and concepts of OOP to build a robust and user friendly VCS that can serve as a valuable tool for all developers/project managers.
  
+##To-do
+files not added before a new commit doesnt exist in the commit snapshot
+commit, branches, merge , revert and check logics not yet handeled
