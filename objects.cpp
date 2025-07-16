@@ -87,33 +87,18 @@ class Tree {
     }
 
     void create_tree_file() {
-        string content;
         json j = items;
-        fs::path temp_path = ".tits/objects/trees/temp";
-        std::ofstream temp_file(temp_path, ios::binary);
-        if (!temp_file) {
-            throw runtime_error("Unexpected Error has occurred while reading the "
-                                "input file while creating a blob\n");
-        }
-        temp_file << j.dump(4);
-        temp_file.close();
-        std::ifstream in_file(temp_path, ios::binary);
-        if (!in_file) {
-            throw runtime_error("Unexpected Error has occurred while reading the "
-                                "input file while creating a blob\n");
-        }
-        // gotta first resize our content string before filling it
-        in_file.seekg(0, ios::end);
-        size_t size = in_file.tellg();
-        // bringing file pointer back
-        in_file.seekg(0, ios::beg);
-        content.resize(size);
-        // storing into content string
-        in_file.read(&content[0], size);
+        string content(j.dump(4));
         SHA1_maker sha;
         hash = sha.SHA(content);
         fs::path tree_file_path = normalize_path(".tits/objects/trees/" + hash);
-        fs::rename(temp_path, tree_file_path);
+        std::ofstream tree_file(tree_file_path, ios::binary);
+        if (!tree_file) {
+            throw runtime_error("Unexpected Error has occurred while reading the "
+                                "input file while creating a blob\n");
+        }
+        tree_file << j.dump(4);
+        tree_file.close();
     }
 
 public:
@@ -165,33 +150,18 @@ class Commit {
     }
 
     void create_commit_file() {
-        string content;
         json j = *this;
-        fs::path temp_path = ".tits/objects/commits/temp";
-        std::ofstream temp_file(temp_path, ios::binary);
-        if (!temp_file) {
-            throw runtime_error("Unexpected Error has occurred while reading the "
-                                "input file while creating a blob\n");
-        }
-        temp_file << j.dump(4);
-        temp_file.close();
-        std::ifstream in_file(temp_path, ios::binary);
-        if (!in_file) {
-            throw runtime_error("Unexpected Error has occurred while reading the "
-                                "input file while creating a blob\n");
-        }
-        // gotta first resize our content string before filling it
-        in_file.seekg(0, ios::end);
-        size_t size = in_file.tellg();
-        // bringing file pointer back
-        in_file.seekg(0, ios::beg);
-        content.resize(size);
-        // storing into content string
-        in_file.read(&content[0], size);
+        string content(j.dump(4));
         SHA1_maker sha;
         hash = sha.SHA(content);
-        fs::path commit_file_path = normalize_path(".tits/objects/commits/" + hash);
-        fs::rename(temp_path, commit_file_path);
+        fs::path commit_file_path = normalize_path(".tits/objects/commit/" + hash);
+        std::ofstream commit_file(commit_file_path, ios::binary);
+        if (!commit_file) {
+            throw runtime_error("Unexpected Error has occurred while reading the "
+                                "input file while creating a blob\n");
+        }
+        commit_file << j.dump(4);
+        commit_file.close();
     }
 
 public:
