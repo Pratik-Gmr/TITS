@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 
+#include "SHA1.cpp"
 #include "initializer.cpp"
 #include "parser.cpp"
 #include "indexing.cpp"
@@ -34,6 +35,10 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
+                break;
+            }
             Indexer Staging_area;
             Staging_area.log();
             break;
@@ -44,6 +49,10 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
+                break;
+            }
             break;
         }
             //below these are TITS commands that take 3 inputs : TITS <cmmnd> <arg>
@@ -51,6 +60,10 @@ int main(int argc, char** argv){
             //to ignore said files/directories by the TITS
             if(!Init.getStatus()){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
+                break;
+            }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
             Indexer Staging_area;
@@ -63,6 +76,10 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
+                break;
+            }
             Indexer Staging_area;
             Staging_area.add(args[2]);
             break;
@@ -71,6 +88,10 @@ int main(int argc, char** argv){
             //to remove certain file from staging area
             if(!Init.getStatus()){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
+                break;
+            }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
             Indexer Staging_area;
@@ -83,7 +104,11 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
-            Commit commit;
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
+                break;
+            }
+            Commit commit(args[2]);
             break;
         }
         case Command::check:{
@@ -95,6 +120,18 @@ int main(int argc, char** argv){
             break;
         }
         case Command::revert:{
+            //to revert back to a certain commit
+            if(!Init.getStatus()){
+                cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
+                break;
+            }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
+                break;
+            }
+            break;
+        }
+        case Command::branch:{
             //to revert back to a certain commit
             if(!Init.getStatus()){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
