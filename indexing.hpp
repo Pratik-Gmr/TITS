@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <filesystem>
@@ -10,11 +12,18 @@ class Indexer{
     vector<fs::path> stage;
     vector<fs::path> ignore;
 
+    fs::path normalize_path(const fs::path &file_path) { // for consistency we normalize all paths
+        fs::path repo = fs::canonical(".tits").parent_path();
+        fs::path absolute = fs::absolute(file_path);
+        fs::path relative = fs::relative(absolute, repo);
+        return relative.lexically_normal(); // remove dots, redundant slashes
+    }
+
     void ignore_init(){
         fs::path file_path(".tits/ignore.tits");
         fstream file(file_path);
         if(!file){
-            throw runtime_error("Unexpected Error has occurred while reading the staging area of this TITS directory\n");
+            throw runtime_error("unexpected error has occurred while reading the staging area of this tits directory\n");
         }
         string line;
         fs::path default_tits_path(".tits/");
@@ -25,7 +34,7 @@ class Indexer{
             ignore.push_back(ignored_files_path.string());
         }
         file.close();
-        if(!default_tits_path_found) throw runtime_error("Your ignore.tits file has been overwritten incorrectly, Consult TITS documentation in its github repo\n");
+        if(!default_tits_path_found) throw runtime_error("your ignore.tits file has been overwritten incorrectly, consult tits documentation in its github repo\n");
     }
 
     bool is_ignored(const fs::path &file_path){
@@ -75,20 +84,13 @@ class Indexer{
         return false;
     }
 
-    fs::path normalize_path(const fs::path &file_path) { //for consistency we normalize all paths
-        fs::path repo = fs::canonical(".tits").parent_path();
-        fs::path absolute = fs::absolute(file_path);
-        fs::path Relative = fs::relative(absolute , repo);
-        return Relative.lexically_normal();  // remove dots, redundant slashes
-    }
-
 public:
     Indexer(){
         ignore_init();
         stage_init();
     }
     ~Indexer() = default;
-    
+
     void log(){
         size_t stage_len = stage.size();
         size_t ignore_len = ignore.size();
