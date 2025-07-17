@@ -6,6 +6,7 @@
 #include "initializer.hpp"
 #include "objects.hpp"
 #include "parser.hpp"
+#include "branch.hpp"
 
 using namespace std;
 
@@ -179,6 +180,26 @@ int main(int argc, char **argv) {
              "directory with 'tits init' for any other tits commands to work\n";
       break;
     }
+    Branch branch;
+    branch.switch_branch(args[2]);
+    break;
+  }
+  case Command::delete_: {
+    // to merge current branch to aother branch
+    if (!Init.getStatus()) {
+      cout
+          << "This is not a TITS directory\nFirst initialize this to a TITS "
+             "directory with 'tits init' for any other tits commands to work\n";
+      break;
+    }
+    if (Init.is_detached()) {
+      cout << "You are in a detached head state.\nUse 'tits branch "
+              "<branch_name>' to either switch to an existing branch or create "
+              "a new branch and switch to it to get out of this state\n";
+      break;
+    }
+    Branch branch;
+    branch.delete_branch(args[2]);
     break;
   }
   case Command::merge: {

@@ -16,6 +16,7 @@ enum class Command{
     check,
     revert,
     branch,
+    delete_,
     merge,
     invalid
 };
@@ -62,6 +63,9 @@ public:
             }
             else if(tokens[1] == "branch"){
                 return Command::branch;
+            }
+            else if(tokens[1] == "delete"){
+                return Command::delete_;
             }
             else if(tokens[1] == "merge"){
                 return Command::merge;
