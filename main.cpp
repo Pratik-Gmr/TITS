@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 #include "SHA1.cpp"
 #include "initializer.cpp"
@@ -8,6 +9,14 @@
 #include "objects.cpp"
 
 using namespace std;
+
+std::string get_timestamp() {
+    std::time_t now = std::time(nullptr);
+    char buf[32];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+    return std::string(buf);
+}
+
 
 int main(int argc, char** argv){
     vector<string> args(argv, argv+argc);
@@ -53,6 +62,7 @@ int main(int argc, char** argv){
                 cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
+            history();
             break;
         }
             //below these are TITS commands that take 3 inputs : TITS <cmmnd> <arg>
@@ -108,7 +118,8 @@ int main(int argc, char** argv){
                 cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
-            Commit commit(args[2]);
+            string time = get_timestamp();
+            Commit commit(args[2], time);
             break;
         }
         case Command::check:{
@@ -117,6 +128,7 @@ int main(int argc, char** argv){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
                 break;
             }
+            check(args[2]);
             break;
         }
         case Command::revert:{
@@ -129,12 +141,25 @@ int main(int argc, char** argv){
                 cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
+            revert(args[2]);
             break;
         }
         case Command::branch:{
-            //to revert back to a certain commit
+            //to create and switch to a new branch or switch to existing branch
             if(!Init.getStatus()){
                 cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
+                break;
+            }
+            break;
+        }
+        case Command::merge:{
+            //to merge current branch to aother branch
+            if(!Init.getStatus()){
+                cout<<"This is not a TITS directory\nFirst initialize this to a TITS directory with 'tits init' for any other tits commands to work\n";
+                break;
+            }
+            if(Init.is_detached()){
+                cout<<"You are in a detached head state.\nUse 'tits branch <branch_name>' to either switch to an existing branch or create a new branch and switch to it to get out of this state\n";
                 break;
             }
             break;
