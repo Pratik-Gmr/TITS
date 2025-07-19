@@ -8,7 +8,6 @@ using namespace std;
 enum class Command{
     init,
     log,
-    history,
     ignore,
     add,
     remove,
@@ -18,6 +17,7 @@ enum class Command{
     branch,
     delete_,
     merge,
+    history,
     invalid
 };
 
@@ -37,9 +37,6 @@ public:
             }
             else if(tokens[1] == "log"){
                 return Command::log;
-            }
-            else if(tokens[1] == "history"){
-                return Command::history;
             }
         }
         else if(token_size == 3){
@@ -69,6 +66,9 @@ public:
             }
             else if(tokens[1] == "merge"){
                 return Command::merge;
+            }
+            else if(tokens[1] == "history"){
+                return Command::history;
             }
         }
         return Command::invalid;

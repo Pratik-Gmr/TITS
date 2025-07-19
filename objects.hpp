@@ -5,6 +5,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <vector>
+#include <unordered_set>
+#include <queue>
 
 #include "SHA1.hpp"
 #include "indexing.hpp"
@@ -22,6 +24,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(files, filepath, hash)
 
 class Commit;
 class Tree;
+
+std::string get_timestamp() {
+    std::time_t now = std::time(nullptr);
+    char buf[32];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+    return std::string(buf);
+}
 
 class Blob {
     string content;
@@ -164,6 +173,10 @@ public:
         }
     }
 
+    vector<files> get_items() {
+        return items;
+    }
+
 };
 
 class Commit {
@@ -175,6 +188,8 @@ class Commit {
 
     friend void to_json(json& j, const Commit& c);
     friend void from_json(const json& j, Commit& c);
+    friend Commit find_common_ancestor(Commit c1, Commit c2);
+
 
     fs::path normalize_path(const fs::path &file_path) { // for consistency we normalize all paths
         fs::path repo = fs::canonical(".tits").parent_path();
@@ -198,11 +213,7 @@ class Commit {
         commit_file.close();
     }
 
-public:
-
-    Commit() = default;
-
-    Commit(const string &m, string t) : message(m), time(t) {
+    void commit_helper(){
         string branch;
         fs::path file_path=".tits/HEAD";
         std::ifstream file(file_path);
@@ -241,7 +252,20 @@ public:
         cout << "Message: " << message << endl;
         cout << "At: " << time << endl;
         cout << "On branch: " << branch << endl;
-    };
+    }
+
+public:
+
+    Commit() = default;
+
+    Commit(const string &m, string t) : message(m), time(t) {
+        commit_helper();
+    }
+
+    Commit(const string &m, string t, string other_parent) : message(m), time(t) {
+        parents.push_back(other_parent);
+        commit_helper();
+    }
 
     Commit(const string& h) : hash(h) {
         fs::path file_path(".tits/objects/commits/" + hash);
@@ -284,7 +308,53 @@ public:
         }
     }
 
+    string get_tree_hash() {
+        return tree_hash;
+    }
+
 };
+
+Commit find_common_ancestor(Commit c1, Commit c2) {
+    unordered_set<string> visited_by_c1;
+    unordered_set<string> visited_by_c2;
+    queue<Commit> q1;
+    queue<Commit> q2;
+    q1.push(c1);
+    q2.push(c2);
+    visited_by_c1.insert(c1.hash);
+    visited_by_c2.insert(c2.hash);
+    while (!q1.empty() || !q2.empty()) {
+        if(!q1.empty()) {
+            Commit current = q1.front();
+            q1.pop();
+            if (visited_by_c2.count(current.hash)) {
+                return current;
+            }
+            for(const auto& parent : current.get_parents()) {
+                if(!visited_by_c1.count(parent)) {
+                    visited_by_c1.insert(parent);
+                    Commit ancestor(parent);
+                    q1.push(ancestor);
+                }
+            }
+        }
+        if(!q2.empty()) {
+            Commit current = q2.front();
+            q2.pop();
+            if (visited_by_c1.count(current.hash)) {
+                return current;
+            }
+            for(const auto& parent : current.get_parents()) {
+                if(!visited_by_c2.count(parent)) {
+                    visited_by_c2.insert(parent);
+                    Commit ancestor(parent);
+                    q2.push(ancestor);
+                }
+            }
+        }
+    }
+    throw runtime_error("Ancestor not found\n");
+}
 
 void to_json(json& j, const Commit& c) {
     j = json{
