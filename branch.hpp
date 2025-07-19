@@ -16,6 +16,7 @@ class Branch {
     string latest_hash;
 
 friend void revert(const string &hash);
+friend void history(const string& flag);
 
 public:
 

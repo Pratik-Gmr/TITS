@@ -54,24 +54,6 @@ int main(int argc, char **argv) {
                 Staging_area.log();
                 break;
             }
-            case Command::history: {
-                // shows all the commit history from the initialization of the TITS
-                // directory
-                if (!Init.getStatus()) {
-                    cout
-                        << "This is not a TITS directory\nFirst initialize this to a TITS "
-                        "directory with 'tits init' for any other tits commands to work\n";
-                    break;
-                }
-                if (Init.is_detached()) {
-                    cout << "You are in a detached head state.\nUse 'tits branch "
-                        "<branch_name>' to either switch to an existing branch or create "
-                        "a new branch and switch to it to get out of this state\n";
-                    break;
-                }
-                history();
-                break;
-            }
             // below these are TITS commands that take 3 inputs : TITS <cmmnd> <arg>
             case Command::ignore: {
                 // to ignore said files/directories by the TITS
@@ -219,6 +201,24 @@ int main(int argc, char **argv) {
                 }
                 Branch branch;
                 branch.merge(args[2]);
+                break;
+            }
+            case Command::history: {
+                // shows all the commit history from the initialization of the TITS
+                // directory
+                if (!Init.getStatus()) {
+                    cout
+                        << "This is not a TITS directory\nFirst initialize this to a TITS "
+                        "directory with 'tits init' for any other tits commands to work\n";
+                    break;
+                }
+                if (Init.is_detached()) {
+                    cout << "You are in a detached head state.\nUse 'tits branch "
+                        "<branch_name>' to either switch to an existing branch or create "
+                        "a new branch and switch to it to get out of this state\n";
+                    break;
+                }
+                history(args[2]);
                 break;
             }
             case Command::invalid: {

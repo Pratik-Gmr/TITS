@@ -312,6 +312,14 @@ public:
         return tree_hash;
     }
 
+    bool operator< (const Commit &commit) const {
+        return time < commit.time;
+    }
+
+    bool operator> (const Commit &commit) const {
+        return time > commit.time;
+    }
+
 };
 
 Commit find_common_ancestor(Commit c1, Commit c2) {
