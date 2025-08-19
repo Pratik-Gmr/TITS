@@ -32,9 +32,17 @@ std::string get_timestamp() {
     return std::string(buf);
 }
 
-class Blob {
-    string content;
+class Objects {
+protected:
     string hash;
+public:
+    Objects () = default;
+    Objects (string h) : hash(h) {}
+    virtual void unroll() = 0;
+};
+
+class Blob : public Objects{
+    string content;
 
     friend class Tree;
 
@@ -79,7 +87,7 @@ public:
         out_file.close();
     }
 
-    Blob(const string& h) : hash(h) {
+    Blob(const string& h) : Objects(h) {
         fs::path file_path(".tits/objects/blobs/" + hash);
         std::ifstream in_file(file_path, ios::binary);
         if (!in_file) {
@@ -95,7 +103,7 @@ public:
         in_file.read(&content[0], size);
     }
 
-    void unroll(const fs::path &file_path) {
+    void unroll (const fs::path &file_path) {
         std::ofstream file(file_path, ios::binary);
         if (!file) {
             throw runtime_error("Unexpected Error has occurred while reading the input file while creating a blob\n");
@@ -104,11 +112,14 @@ public:
         file.close();
     }
 
+    void unroll () override {
+        throw runtime_error("unroll for blob object type requires file path as argument\n");
+    }
+
 };
 
-class Tree {
+class Tree : public Objects {
     vector<files> items;
-    string hash;
 
     friend class Commit;
 
@@ -154,7 +165,7 @@ public:
         create_tree_file();
     }
 
-    Tree(const string& h) : hash(h) {
+    Tree(const string& h) : Objects(h) {
         fs::path file_path(".tits/objects/trees/" + hash);
         std::ifstream file(file_path);
         if (!file) {
@@ -166,7 +177,7 @@ public:
         this -> items = j;
     }
 
-    void unroll() {
+    void unroll() override {
         for (const auto& item : items){
             Blob blob(item.hash);
             blob.unroll(item.filepath);
@@ -179,8 +190,7 @@ public:
 
 };
 
-class Commit {
-    string hash;
+class Commit : public Objects {
     string message;
     vector<string> parents;
     string tree_hash;
@@ -267,7 +277,7 @@ public:
         commit_helper();
     }
 
-    Commit(const string& h) : hash(h) {
+    Commit(const string& h) : Objects(h) {
         fs::path file_path(".tits/objects/commits/" + hash);
         std::ifstream file(file_path);
         if (!file) {
